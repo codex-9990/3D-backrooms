@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 const ids = ["ryokan", "cathedral", "courtyard", "ship", "colony", "forest"];
 async function ready(page) {
+  page.on("console", (message) => {
+    if (message.type() === "error")
+      console.log("BROWSER ERROR:", message.text());
+  });
   await page.goto("/");
   await expect(page.locator("#loading")).toBeHidden();
   await expect(page.locator("#error")).toBeHidden();

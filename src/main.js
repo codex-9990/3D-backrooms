@@ -119,12 +119,13 @@ function switchWorld(id) {
   if (old) old.dispose();
   renderer.renderLists.dispose();
   if (trailsPass) {
-    const previous = renderer.getRenderTarget();
-    renderer.setRenderTarget(trailsPass.textureOld);
-    renderer.clear();
-    renderer.setRenderTarget(trailsPass.textureComp);
-    renderer.clear();
-    renderer.setRenderTarget(previous);
+    // Use the public pass lifecycle rather than private render-target fields.
+    const index = composer.passes.indexOf(trailsPass);
+    composer.removePass(trailsPass);
+    trailsPass.dispose();
+    trailsPass = new AfterimagePass(0.8);
+    composer.insertPass(trailsPass, index);
+    syncEffects();
   }
   const m = world.meta;
   document.documentElement.style.setProperty("--accent", m.color);

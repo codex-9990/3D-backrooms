@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#101511" />
+    <meta
+      name="description"
+      content="LIMINAL ATLAS — 六つのオリジナルな境界世界を歩く、静かな3Dホラー探索。"
+    />
+    <link rel="icon" href="./favicon.svg" />
+    <title>LIMINAL ATLAS — 境界世界の記録</title>
+  </head>
+  <body>
+    <canvas
+      id="scene"
+      aria-label="探索できる3Dの境界世界"
+      tabindex="0"
+    ></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div id="loading" role="status">
+      <div class="loader-ring"></div>
+      <span>境界を構築しています</span>
+    </div>
+    <div id="error" hidden role="alert">
+      <h1>この境界を開けませんでした</h1>
+      <p id="error-detail"></p>
+      <button onclick="location.reload()">もう一度読み込む</button>
+    </div>
+    <header id="header">
+      <a class="brand" href="#" aria-label="世界の選択へ"
+        ><span class="brand-mark">⌑</span
+        ><span>LIMINAL<span class="brand-second">ATLAS</span></span></a
+      >
+      <div class="edition">
+        ARCHIVE OF IMPOSSIBLE PLACES<br /><span
+          >VOL. 01 &nbsp; / &nbsp; SIX WORLDS</span
+        >
+      </div>
+      <div class="header-actions">
+        <button
+          id="settings-open"
+          class="quiet-button"
+          aria-label="知覚と設定を開く"
+        >
+          ◉ <span>知覚 / 設定</span></button
+        ><button id="worlds-open" class="quiet-button" hidden>世界を選ぶ</button
+        ><button
+          id="hide-ui"
+          class="icon-button"
+          aria-label="画面の表示を隠す"
+          hidden
+        >
+          ⊡
+        </button>
+      </div>
+    </header>
+    <main id="atlas">
+      <section class="intro">
+        <p class="eyebrow">
+          <span class="status-dot"></span> 境界世界の記録 / 境界 01–06
+        </p>
+        <h1>Somewhere,<br />you have<br /><em>never been.</em></h1>
+        <p class="intro-copy">
+          なつかしい。なのに、知らない。<br />現実から少しだけ離れた、六つの世界へ。
+        </p>
+        <div class="selected-info">
+          <span id="selected-number">01</span>
+          <div>
+            <h2 id="selected-title">彼岸の旅館</h2>
+            <p id="selected-tagline">廊下の先で、誰かがずっと待っている。</p>
+          </div>
+        </div>
+        <button id="enter" class="primary-button">
+          この世界へ入る <span>↗</span>
+        </button>
+        <p class="safety-note">
+          追跡・突然の大音量・強い点滅はありません。<br />音はオフから開始。いつでも退出できます。
+        </p>
+      </section>
+      <div class="scene-caption" aria-hidden="true">
+        <span id="scene-en">THE INN BETWEEN</span>
+        <p id="scene-caption">A ROOM WAS PREPARED. NO ONE ARRIVED.</p>
+        <div class="caption-line"></div>
+        <span>FICTIONAL SPACE · PROCEDURALLY BUILT</span>
+      </div>
+      <section class="world-library" aria-label="世界を選ぶ">
+        <div class="library-title">
+          <span>THE COLLECTION</span><span>どこへ、迷い込みますか。</span>
+        </div>
+        <div id="world-cards"></div>
+      </section>
+    </main>
+    <div id="hud" hidden>
+      <div class="world-label">
+        <span id="hud-number">WORLD 01</span>
+        <h2 id="hud-title">彼岸の旅館</h2>
+        <p id="hud-description"></p>
+      </div>
+      <div id="reticle" aria-hidden="true"></div>
+      <p id="entry-hint">画面をクリックして視点操作 / ドラッグでも見回せます</p>
+      <div class="walk-footer">
+        <span class="desktop-help"
+          >W A S D / 矢印: 移動 &nbsp; ドラッグ: 視点 &nbsp; Shift: 速く歩く
+          &nbsp; Esc: 世界選択</span
+        ><span class="mobile-help"
+          >左のパッドで歩く · 右側をスワイプして見回す</span
+        ><span id="coordinates">00.0 / 00.0</span
+        ><button id="reset-player" class="quiet-button">入口に戻る ↺</button>
+      </div>
+    </div>
+    <div id="touch-controls" hidden>
+      <div id="joystick" role="group" aria-label="移動パッド">
+        <div id="joystick-knob"></div>
+      </div>
+      <span class="look-hint">LOOK AROUND ↔</span>
+    </div>
+    <button id="restore-ui" hidden aria-label="画面の表示を戻す">
+      表示を戻す ⊞
+    </button>
+    <dialog id="settings">
+      <form method="dialog">
+        <div class="dialog-title">
+          <div>
+            <p class="eyebrow">PERCEPTION</p>
+            <h2>世界の見え方</h2>
+          </div>
+          <button class="icon-button" aria-label="設定を閉じる">×</button>
+        </div>
+        <p class="settings-note">
+          これは創作上の視覚演出です。心地よい強さで。
+        </p>
+        <label class="range-label" for="intensity"
+          >幻視エフェクト <output id="intensity-output">25%</output></label
+        ><input id="intensity" type="range" min="0" max="100" value="25" />
+        <div class="range-ends">
+          <span>現実に近く</span><span>夢の深部へ</span>
+        </div>
+        <label class="toggle"
+          ><span>色収差 <small>輪郭に色のずれ</small></span
+          ><input id="chromatic" type="checkbox" checked /></label
+        ><label class="toggle"
+          ><span>空間のゆらぎ <small>ごく緩やかな歪み</small></span
+          ><input id="distortion" type="checkbox" checked /></label
+        ><label class="toggle"
+          ><span>残像 <small>視点を動かすと光の記憶が残る</small></span
+          ><input id="trails" type="checkbox" /></label
+        ><label class="toggle"
+          ><span>動きを抑える <small>自動旋回・ゆらぎ・残像を停止</small></span
+          ><input id="reduce-motion" type="checkbox" /></label
+        ><label class="toggle"
+          ><span>環境音 <small>この端末で合成する、小さなドローン</small></span
+          ><input id="audio" type="checkbox" /></label
+        ><label class="select-label" for="quality"
+          >描画品質<select id="quality">
+            <option value="low">軽量</option>
+            <option value="balanced" selected>バランス</option>
+            <option value="high">高精細</option>
+          </select></label
+        >
+        <p class="settings-foot">
+          疲れや違和感を感じたら、演出を0にするか探索を休んでください。設定はこのブラウザにのみ保存されます。
+        </p>
+      </form>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -446,6 +446,10 @@ h1 em {
   left: 40px;
   top: 119px;
   text-shadow: 0 2px 12px #0008;
+  max-width: calc(100% - 80px);
+  padding: 12px 14px;
+  border-radius: 5px;
+  background: #071710b8;
 }
 .world-label > span {
   font: 9px monospace;
@@ -475,6 +479,9 @@ h1 em {
   align-items: center;
   font: 9px monospace;
   color: #d1d8c4;
+  padding: 10px 12px;
+  border-radius: 5px;
+  background: #071710b8;
 }
 .walk-footer button {
   margin-left: auto;
@@ -694,7 +701,7 @@ select {
   height: 108px;
   border: 1px solid #d8e5bc50;
   border-radius: 50%;
-  background: #21302325;
+  background: #15231f70;
   touch-action: none;
   backdrop-filter: blur(2px);
 }
@@ -716,6 +723,7 @@ select {
   font: 8px monospace;
   letter-spacing: 2px;
   opacity: 0.6;
+  text-shadow: 0 1px 3px #071710;
 }
 [hidden] {
   display: none !important;
@@ -897,6 +905,7 @@ body.exploring .edition {
   .world-label {
     left: 24px;
     top: 99px;
+    max-width: calc(100% - 48px);
   }
   .world-label h2 {
     font-size: 22px;
@@ -926,12 +935,7 @@ body.exploring .edition {
     flex-shrink: 0;
   }
   #entry-hint {
-    bottom: 58px;
-    font-size: 8px;
-    white-space: normal;
-    text-align: center;
-    width: 90%;
-    background: transparent;
+    display: none;
   }
   #atlas:before {
     background:

@@ -71,6 +71,12 @@ test("canvas receives mouse input; settings, UI hide, keyboard escape and storag
   await page.mouse.up();
   let state = await page.evaluate(() => window.liminalAtlas.snapshot());
   expect(Math.abs(state.yaw - start.yaw)).toBeGreaterThan(0.1);
+  const beforeKeys = state.yaw;
+  await page.keyboard.down("e");
+  await page.waitForTimeout(350);
+  await page.keyboard.up("e");
+  state = await page.evaluate(() => window.liminalAtlas.snapshot());
+  expect(Math.abs(state.yaw - beforeKeys)).toBeGreaterThan(0.02);
   await page.locator("#hide-ui").click();
   await expect(page.locator("#restore-ui")).toBeVisible();
   await page.locator("#restore-ui").click();
@@ -141,6 +147,22 @@ test("mobile layout and simultaneous touch movement/look stay interactive", asyn
   await page.screenshot({ path: "test-results/forest-mobile.png" });
   await page.locator("#worlds-open").tap();
   await expect(page.locator("#atlas")).toBeVisible();
+  await page.setViewportSize({ width: 320, height: 568 });
+  const layout = await page.evaluate(() => ({
+    entryBottom: document.getElementById("enter").getBoundingClientRect()
+      .bottom,
+    cardsTop: document.getElementById("world-cards").getBoundingClientRect()
+      .top,
+    scrollable:
+      document.getElementById("atlas").scrollHeight >
+      document.getElementById("atlas").clientHeight,
+  }));
+  expect(layout.cardsTop).toBeGreaterThan(layout.entryBottom);
+  expect(layout.scrollable).toBe(true);
+  await page.locator('[data-world="ship"]').scrollIntoViewIfNeeded();
+  await page.locator('[data-world="ship"]').tap();
+  await page.locator("#enter").tap();
+  await expect(page.locator("#hud")).toBeVisible();
   await context.close();
 });
 test("blocked localStorage and reduced-motion preference do not break startup", async ({

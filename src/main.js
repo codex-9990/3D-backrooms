@@ -307,6 +307,10 @@ function bindControls() {
       return;
     if (
       [
+        "KeyQ",
+        "KeyE",
+        "KeyI",
+        "KeyK",
         "KeyW",
         "KeyA",
         "KeyS",
@@ -440,6 +444,16 @@ function animate(now) {
   last = now;
   time += dt;
   if (exploring && !$("settings").open) {
+    yaw +=
+      ((keys.has("KeyQ") ? 1 : 0) - (keys.has("KeyE") ? 1 : 0)) * dt * 1.25;
+    pitch = Math.max(
+      -1.32,
+      Math.min(
+        1.32,
+        pitch +
+          ((keys.has("KeyI") ? 1 : 0) - (keys.has("KeyK") ? 1 : 0)) * dt * 0.85,
+      ),
+    );
     let x =
       (keys.has("KeyD") || keys.has("ArrowRight") ? 1 : 0) -
       (keys.has("KeyA") || keys.has("ArrowLeft") ? 1 : 0) +

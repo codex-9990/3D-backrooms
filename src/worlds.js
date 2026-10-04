@@ -175,7 +175,7 @@ function builder(meta) {
       batches.set(m, arr);
     }
     arr.push([x, y, z, w, h, d]);
-    if (solid && y - h / 2 < 2 && y + h / 2 > 0.3) collider(x, z, w, d);
+    if (solid && y - h / 2 < 2 && y + h / 2 >= 0.3) collider(x, z, w, d);
   }
   function mesh(geo, m, pos = [0, 0, 0], solid = false, size = [1, 1]) {
     geometries.add(geo);

@@ -94,3 +94,10 @@ test("procedural random generator repeats", () => {
     Array.from({ length: 20 }, b),
   );
 });
+
+test("courtyard reflecting basin blocks walking at its rim height", () => {
+  const world = buildWorld("courtyard");
+  assert.equal(isWalkable(2, -5, world), false);
+  assert.equal(isWalkable(-2, -5, world), false);
+  world.dispose();
+});

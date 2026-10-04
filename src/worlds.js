@@ -80,6 +80,45 @@ export const WORLDS = [
     freq: 41.2,
     seed: 618,
   },
+  {
+    id: "dreamMall",
+    number: "07",
+    name: "白昼夢のモール",
+    en: "THE DAYDREAM GALLERIA",
+    genre: "PASTEL · EMPTY MALL",
+    tagline: "開店の音楽だけが、まだ来ない。",
+    caption: "OPEN EVERY DAY. EXPECTING NO ONE.",
+    description: "桃色の吹き抜け、閉じた店、止まった噴水。ずっと開店前の午後。",
+    color: "#f1bace",
+    freq: 98,
+    seed: 721,
+  },
+  {
+    id: "poolrooms",
+    number: "08",
+    name: "ミルク色の水夢",
+    en: "THE MILKBLUE BATHS",
+    genre: "PASTEL · POOLROOMS",
+    tagline: "水面の向こうで、午後がほどける。",
+    caption: "THE WATER REMEMBERS A DIFFERENT SKY.",
+    description: "乳白色のタイルと水色の水面。誰もいない浴場に、柔らかな光が満ちる。",
+    color: "#b5e3ed",
+    freq: 87.3,
+    seed: 824,
+  },
+  {
+    id: "parallel",
+    number: "09",
+    name: "並行色の回廊",
+    en: "THE PARALLEL HOURS",
+    genre: "PASTEL · PARALLEL SPACE",
+    tagline: "隣の色では、違う午後が続いている。",
+    caption: "THREE COLOURS. THE SAME IMPOSSIBLE HOUR.",
+    description: "ピンク、水色、ミント。横道でつながる三つの回廊と、終わらない反復。",
+    color: "#d5c4ed",
+    freq: 110,
+    seed: 927,
+  },
 ];
 
 const textureCache = new Map();
@@ -815,9 +854,195 @@ function forest(b) {
   light("#8dffce", 30, [0, 4, -20], 30);
   light("#5abdb3", 20, [0, 3, 14], 26);
 }
+function dreamMall(b) {
+  const { world, box, mat, tex, glow, instances, collider, cylinder, sphere,
+    torus, environment, label } = b;
+  world.bounds = { minX: -22, maxX: 22, minZ: -35, maxZ: 29 };
+  world.spawn.z = 25;
+  environment("#e9dce4", "#eadde1", 20, 95, 1.75);
+  const cream = mat("#f5e9d3"), pink = mat("#e7a9bb"),
+    blue = mat("#add4e0"), lilac = mat("#b8aecf"),
+    floor = tex("tile", "#f2dede", [14, 22], { roughness: 0.3 }),
+    shutter = tex("wood", "#cfbecd", [2, 5]),
+    light = glow("#fff4de"), mint = mat("#a3c8b4"),
+    water = mat("#99c9d2", { roughness: 0.18, metalness: 0.2 });
+  box(0, -0.2, -3, 46, 0.4, 66, floor);
+  box(0, 13.2, -3, 46, 0.5, 66, cream);
+  // A luminous skylight and its deep ribs keep the atrium bright without shadows.
+  box(0, 12.9, -3, 12, 0.08, 60, light);
+  for (let z = -31; z <= 25; z += 4) box(0, 12.65, z, 12.5, 0.55, 0.2, cream);
+  for (const x of [-6, 6]) box(x, 12.7, -3, 0.3, 0.7, 61, pink);
+  const pillars = [];
+  for (const side of [-1, 1]) {
+    box(side * 22.5, 6.5, -3, 1, 13, 66, pink, true);
+    box(side * 17, 5.9, -3, 10, 0.5, 66, cream);
+    box(side * 12.1, 6.6, -3, 0.2, 1.15, 64, lilac);
+    box(side * 11.9, 7.25, -3, 0.35, 0.12, 64, cream);
+    for (let z = -28; z <= 20; z += 12) {
+      pillars.push([side * 12, 6.1, z, 0.45, 12.2, 0.45]);
+      collider(side * 12, z, 0.9, 0.9);
+      box(side * 17.2, 2.4, z, 8.7, 4.8, 0.4, shutter, true);
+      box(side * 17.2, 5.1, z, 8.8, 0.6, 0.6, (z % 24) ? blue : pink);
+      box(side * 17.2, 9.1, z, 8.7, 4.6, 0.3, shutter);
+      box(side * 17.2, 11.65, z, 8.8, 0.45, 0.5, blue);
+      box(side * 12.1, 4.5, z + 5.8, 0.2, 0.15, 10, light);
+    }
+  }
+  instances(new T.CylinderGeometry(1, 1, 1, 12), cream, pillars);
+  box(0, 6.5, -35, 45, 13, 0.5, pink, true);
+  box(0, 2.5, -34.65, 7.4, 5, 0.15, blue, true);
+  label("TOMORROW / 00:00", [0, 7.3, -34.6], 7, "#f5cadb");
+  // Shallow fountain: visible rim and complete collider, with room to walk either side.
+  cylinder(0, 0.45, -6, 4.1, 0.9, cream, true, 4.1, 48);
+  cylinder(0, 0.92, -6, 3.7, 0.06, water, false, 3.7, 48);
+  const fountain = torus(0, 0.98, -6, 3.85, 0.17, pink);
+  fountain.rotation.x = Math.PI / 2;
+  cylinder(0, 1.5, -6, 0.65, 1.2, cream);
+  sphere(0, 2.65, -6, 0.8, lilac);
+  // Closed escalators are sculpture-like landmarks, not misleading walkable ramps.
+  for (const side of [-1, 1]) {
+    const x = side * 8.5;
+    collider(x, -22, 2.5, 10);
+    for (let i = 0; i < 17; i++) {
+      box(x, 0.2 + i * 0.32, -17 - i * 0.58, 2.2, 0.32, 0.58, blue);
+      for (const edge of [-1, 1])
+        box(x + edge * 1.22, 1 + i * 0.32, -17 - i * 0.58, 0.15, 1, 0.6, pink);
+    }
+    box(x, 0.85, -16.6, 2.6, 1.7, 0.15, lilac, true);
+  }
+  for (const x of [-8, 8]) for (const z of [8, 20]) {
+    cylinder(x, 0.4, z, 0.85, 0.8, pink, true, 0.95);
+    cylinder(x, 2, z, 0.09, 3.2, cream);
+    const leaf = sphere(x, 3.6, z, 1.15, mint, 12);
+    leaf.scale.y = 0.28;
+    box(x, 0.52, z - 2.4, 3, 0.5, 0.8, lilac, true);
+  }
+  // One impossible moon hangs below the skylight, with no rapid or flashing motion.
+  sphere(0, 9.3, -20, 2.1, glow("#f3cfdf"));
+}
+
+function poolrooms(b) {
+  const { world, box, mat, tex, glow, mesh, instances, collider,
+    environment, label, sphere } = b;
+  world.bounds = { minX: -22, maxX: 22, minZ: -35, maxZ: 29 };
+  world.spawn.z = 25;
+  environment("#e0edf0", "#e5eff0", 17, 80, 1.85);
+  const tile = tex("tile", "#f6efe4", [4, 5], { roughness: 0.32 }),
+    floor = tex("tile", "#d7e8e8", [22, 32], { roughness: 0.28 }),
+    blue = mat("#afcfdf"), pink = mat("#e2becd"),
+    cream = mat("#fff1d7"), sun = glow("#ffedcf", 1.15);
+  box(0, -0.25, -3, 46, 0.5, 66, floor);
+  box(0, 10.6, -3, 46, 0.4, 66, tile);
+  for (const x of [-22, 22]) box(x, 5.2, -3, 0.6, 10.4, 66, tile, true);
+  box(0, 5.2, -35, 44, 10.4, 0.6, tile, true);
+  box(0, 5.2, 29, 44, 10.4, 0.6, tile, true);
+  // Side alcoves and arches repeat above the pools; the central dry promenade is clear.
+  const arches = [], pillars = [];
+  for (const x of [-10, 10]) for (const z of [-27, -13, 1, 15]) {
+    arches.push([x, 4.8, z, 4.2, 4.2, 1]);
+    for (const side of [-1, 1]) {
+      pillars.push([x + side * 4.2, 2.4, z, 0.55, 4.8, 0.55]);
+      collider(x + side * 4.2, z, 1.1, 1.1);
+    }
+  }
+  instances(new T.TorusGeometry(1, 0.075, 6, 24, Math.PI), tile, arches);
+  instances(new T.CylinderGeometry(1, 1, 1, 12), tile, pillars);
+  for (const z of [-24, -3, 18]) {
+    box(0, 10.34, z, 9, 0.1, 7.5, sun);
+    for (const x of [-3, 0, 3]) box(x, 10.18, z, 0.13, 0.3, 8, cream);
+  }
+  const water = new T.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `varying vec3 vPosition;
+      void main(){vPosition=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+    fragmentShader: `varying vec3 vPosition; uniform float uTime;
+      void main(){
+        vec2 p=vPosition.xz;
+        float wave=sin(p.x*2.7+sin(p.y*2.1+uTime*.24))*sin(p.y*3.1-uTime*.19);
+        float caustic=pow(max(0.,wave),8.);
+        vec3 c=mix(vec3(.31,.64,.72),vec3(.66,.87,.87),.4+wave*.14);
+        gl_FragColor=vec4(c+vec3(.13,.15,.12)*caustic,1.);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,
+  });
+  world.animations.push((t, dt, motion) => { water.uniforms.uTime.value = motion ? t : 0; });
+  for (const x of [-10, 10]) for (const z of [-20, 1]) {
+    const w = 7.4, d = 16;
+    collider(x, z, w + 0.6, d + 0.6);
+    box(x, 0.21, z, w + 0.5, 0.42, d + 0.5, blue);
+    const plane = mesh(new T.PlaneGeometry(w, d), water, [x, 0.46, z]);
+    // Water shader uses world-aligned X/Z coordinates after rotating the geometry.
+    plane.geometry.rotateX(-Math.PI / 2);
+    for (const side of [-1, 1]) {
+      box(x + side * (w / 2 + 0.14), 0.49, z, 0.27, 0.19, d + 0.5, cream);
+      box(x, 0.49, z + side * (d / 2 + 0.14), w + 0.5, 0.19, 0.27, cream);
+    }
+  }
+  // A tall frosted window reads as daylight; it is closed at ground level.
+  box(0, 5.9, -34.6, 8, 7.5, 0.1, sun);
+  for (const x of [-2, 2]) box(x, 5.9, -34.45, 0.15, 7.8, 0.15, blue);
+  box(0, 5.9, -34.43, 8, 0.17, 0.15, blue);
+  for (const x of [-19.8, 19.8]) {
+    box(x, 0.4, 21, 2, 0.8, 4, pink, true);
+    box(x, 2.3, -31, 3.4, 4.6, 0.25, pink, true);
+  }
+  label("NO DIVING / NO TIME", [0, 1.1, -34.52], 4.7, "#bedee5");
+  sphere(-16, 7.5, -23, 1.1, glow("#f3ceda"));
+}
+
+function parallel(b) {
+  const { world, box, mat, tex, glow, instances, collider, environment,
+    label, sphere } = b;
+  world.bounds = { minX: -17.5, maxX: 17.5, minZ: -47, maxZ: 27 };
+  world.spawn.z = 23;
+  environment("#e4dfe9", "#dfdde9", 15, 68, 1.65);
+  const floor = tex("tile", "#eee6df", [18, 35], { roughness: 0.4 }),
+    cream = mat("#f3e9d9"), light = glow("#fff1df"),
+    colors = ["#e6afc6", "#b9dcea", "#b9ddc8"],
+    shades = colors.map((color) => mat(color)),
+    dark = mat("#9694b1");
+  box(0, -0.2, -10, 36, 0.4, 76, floor);
+  box(0, 8.2, -10, 36, 0.4, 76, cream);
+  for (const x of [-17.5, 17.5]) box(x, 4, -10, 0.5, 8, 76, cream, true);
+  box(0, 4, -47, 36, 8, 0.5, dark, true);
+  box(0, 4, 27, 36, 8, 0.5, cream, true);
+  // Three long parallel lanes connect through generous cross-passages.
+  for (const x of [-5.8, 5.8]) for (const z of [20, 2, -18, -39]) {
+    const length = z === 20 ? 10 : z === -39 ? 16 : 14;
+    box(x, 4, z, 0.45, 8, length, cream, true);
+  }
+  for (let lane = 0; lane < 3; lane++) {
+    const x = (lane - 1) * 11.6, material = shades[lane],
+      portals = [], columns = [];
+    box(x, 0.014, -10, 10.5, 0.025, 75, material);
+    box(x, 7.96, -10, 4.8, 0.06, 73, light);
+    for (let z = 16; z >= -44; z -= 10) {
+      portals.push([x, 3.1, z, 4.55, 4.55, 1]);
+      for (const side of [-1, 1]) {
+        columns.push([x + side * 4.55, 1.55, z, 0.28, 3.1, 0.28]);
+        collider(x + side * 4.55, z, 0.6, 0.6);
+        box(x + side * 5.36, 1.7, z - 2.3, 0.18, 3.4, 1.8, material, true);
+        box(x + side * 5.23, 2.9, z - 2.3, 0.07, 0.08, 1.55, light);
+      }
+      box(x, 7.65, z, 9.8, 0.35, 0.35, material);
+    }
+    instances(new T.TorusGeometry(1, 0.06, 6, 32, Math.PI), material, portals);
+    instances(new T.CylinderGeometry(1, 1, 1, 12), material, columns);
+    box(x, 3.2, -46.68, 6.3, 6.4, 0.1, material);
+    box(x, 2.6, -46.54, 4.7, 5.2, 0.08, dark);
+    box(x, 2.4, -46.45, 3.5, 4.8, 0.07, light);
+    label("14:14 / " + ["ROSE", "SKY", "MINT"][lane], [x, 5.9, -46.39], 4.5, colors[lane]);
+    sphere(x, 6.7, -33, 0.75, light, 16);
+  }
+  // The cross-passages carry all three colours, making the alternate paths discoverable.
+  for (const z of [12, -8, -28]) for (let lane = 0; lane < 3; lane++)
+    box((lane - 1) * 11.6, 0.034, z, 11.6, 0.025, 2, shades[(lane + 1) % 3]);
+}
+
 export function buildWorld(id) {
   const meta = WORLDS.find((w) => w.id === id) || WORLDS[0],
     b = builder(meta);
-  ({ ryokan, cathedral, courtyard, ship, colony, forest })[meta.id](b);
+  ({ ryokan, cathedral, courtyard, ship, colony, forest, dreamMall, poolrooms, parallel })[meta.id](b);
   return b.finish();
 }
